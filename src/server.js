@@ -6,9 +6,13 @@ import ratelimiter from "./middleware/rate-limiter.js";
 
 import transactionsRoute from "./routes/transactionsRoute.js";
 
+import job from "./config/cron.js";
+
 dotenv.config();
 
 const app = express();
+
+if(process.env.NODE_ENV === "production") job.start()
 
 // middleware : function running between request and response
 app.use(ratelimiter);
@@ -21,6 +25,10 @@ app.use(express.json())
 // })
 
 const PORT = process.env.PORT || 5001;
+
+app.get("/api/health", (req, res) => {
+    res.status(200).json({start: "ok"})
+});
 
 //connectDB(process.env.DATABASE_URL)
 
